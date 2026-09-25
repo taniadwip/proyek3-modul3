@@ -7,17 +7,24 @@ use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use App\Services\ActivityService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ActivityController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $status = $request->query('status');
+        $validStatuses = ['Planned', 'Ongoing', 'Done'];
+
         $activities = Activity::query()
+            ->when(in_array($status, $validStatuses, true), function ($query) use ($status) {
+                $query->where('status', $status);
+            })
             ->orderBy('activity_date')
             ->get();
 
-        return view('activities.index', compact('activities'));
+        return view('activities.index', compact('activities', 'status'));
     }
 
     public function create(): View
@@ -45,13 +52,13 @@ class ActivityController extends Controller
     }
 
     public function update(UpdateActivityRequest $request, Activity $activity, ActivityService $service): RedirectResponse
-{
-    $service->update($activity, $request->validated());
+    {
+        $service->update($activity, $request->validated());
 
-    return redirect()
-        ->route('activities.show', $activity)
-        ->with('success', 'Kegiatan berhasil diperbarui!');
-}
+        return redirect()
+            ->route('activities.show', $activity)
+            ->with('success', 'Kegiatan berhasil diperbarui!');
+    }
 
     public function destroy(Activity $activity): RedirectResponse
     {

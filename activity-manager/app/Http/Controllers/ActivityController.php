@@ -32,9 +32,9 @@ class ActivityController extends Controller
         return view('activities.create');
     }
 
-    public function store(StoreActivityRequest $request): RedirectResponse
+    public function store(StoreActivityRequest $request, ActivityService $service): RedirectResponse
     {
-        Activity::create($request->validated());
+        $service->create($request->validated());
 
         return redirect()
             ->route('activities.index')

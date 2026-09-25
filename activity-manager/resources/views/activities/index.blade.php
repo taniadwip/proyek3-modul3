@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <p><a href="{{ route('activities.create') }}">+ Tambah Kegiatan Baru</a></p>
     <h1>Daftar Kegiatan</h1>
 
     @forelse ($activities as $activity)

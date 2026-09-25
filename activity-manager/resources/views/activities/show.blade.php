@@ -1,7 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <p><a href="{{ route('activities.index') }}">&larr; Kembali ke daftar</a></p>
+    <p>
+    <a href="{{ route('activities.edit', $activity) }}">Edit Kegiatan</a>
+</p>
+<form action="{{ route('activities.destroy', $activity) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus kegiatan ini?');">
+    @csrf
+    @method('DELETE')
+    <button type="submit" style="color: red;">Hapus Kegiatan</button>
+</form>
 
     <article class="card">
         <h1>{{ $activity->title }}</h1>

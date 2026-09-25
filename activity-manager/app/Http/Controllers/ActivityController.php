@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
+use App\Services\ActivityService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -43,14 +44,14 @@ class ActivityController extends Controller
         return view('activities.edit', compact('activity'));
     }
 
-    public function update(UpdateActivityRequest $request, Activity $activity): RedirectResponse
-    {
-        $activity->update($request->validated());
+    public function update(UpdateActivityRequest $request, Activity $activity, ActivityService $service): RedirectResponse
+{
+    $service->update($activity, $request->validated());
 
-        return redirect()
-            ->route('activities.show', $activity)
-            ->with('success', 'Kegiatan berhasil diperbarui!');
-    }
+    return redirect()
+        ->route('activities.show', $activity)
+        ->with('success', 'Kegiatan berhasil diperbarui!');
+}
 
     public function destroy(Activity $activity): RedirectResponse
     {

@@ -26,11 +26,20 @@
             <input type="date" name="activity_date" value="{{ old('activity_date') }}">
         </div>
         <br>
-        <div>
-            <label>Kategori:</label><br>
-            <input type="text" name="category" value="{{ old('category') }}">
+        <div style="margin-bottom: 15px;">
+            <label for="category_id"><strong>Kategori:</strong></label><br>
+            <select name="category_id" id="category_id" required style="width: 100%; padding: 8px;">
+                <option value="">-- Pilih Kategori --</option>
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('category_id')
+                <div style="color: red;">{{ $message }}</div>
+            @enderror
         </div>
-        <br>
         <div>
             <label>Status:</label><br>
             <select name="status">

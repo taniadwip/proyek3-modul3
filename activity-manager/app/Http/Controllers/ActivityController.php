@@ -13,19 +13,38 @@ use Illuminate\View\View;
 
 class ActivityController extends Controller
 {
-    public function index(Request $request): View
+   public function index(Request $request)
     {
-        $status = $request->query('status');
-        $validStatuses = ['Planned', 'Ongoing', 'Done'];
+        $query = Activity::with('category');
 
-        $activities = Activity::query()
-            ->when(in_array($status, $validStatuses, true), function ($query) use ($status) {
-                $query->where('status', $status);
-            })
-            ->orderBy('activity_date')
-            ->get();
+        // 1. Search Kode / Judul (Hanya jalan jika kolom pencarian diisi)
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                  ->orWhere('title', 'like', "%{$search}%");
+            });
+        }
 
-        return view('activities.index', compact('activities', 'status'));
+        // 2. Filter Kategori (Hanya jalan jika BUKAN 'Semua Kategori')
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        // 3. Filter Status (Hanya jalan jika BUKAN 'Semua Status')
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        // 4. Sort Tanggal
+        $sortDirection = $request->input('sort') === 'asc' ? 'asc' : 'desc';
+        $query->orderBy('activity_date', $sortDirection);
+
+        // 5. Pagination 5 data per halaman
+        $activities = $query->paginate(5)->withQueryString();
+        $categories = Category::orderBy('name')->get();
+
+        return view('activities.index', compact('activities', 'categories'));
     }
 
     public function create(): View

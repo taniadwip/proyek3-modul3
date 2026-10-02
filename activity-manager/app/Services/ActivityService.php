@@ -3,42 +3,61 @@
 namespace App\Services;
 
 use App\Models\Activity;
-use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 
 class ActivityService
 {
     /**
-     * Update data kegiatan sekaligus memeriksa aturan transisi status.
+     * Transisi: Draft -> Published
+     * Business rule guard: Judul, deskripsi, tanggal, dan kategori wajib lengkap.
      */
-    public function update(Activity $activity, array $data): Activity
+    public function publish(Activity $activity): Activity
     {
-        $newStatus = $data['status'] ?? $activity->status;
-
-        if (! $this->canTransition($activity->status, $newStatus)) {
-            throw ValidationException::withMessages([
-                'status' => "Perubahan status dari {$activity->status} ke {$newStatus} tidak diperbolehkan.",
-            ]);
+        if ($activity->status !== 'Draft') {
+            throw new InvalidArgumentException("Hanya kegiatan berstatus Draft yang dapat dipublikasikan.");
         }
 
-        $activity->update($data);
+        // Business rule guard: validasi kelengkapan data draft
+        if (empty($activity->title) || empty($activity->description) || empty($activity->activity_date) || empty($activity->category_id)) {
+            throw new InvalidArgumentException("Kegiatan tidak lengkap: deskripsi, tanggal, dan kategori wajib diisi sebelum publikasi.");
+        }
 
+        $activity->update(['status' => 'Published']);
         return $activity;
     }
 
     /**
-     * Memvalidasi apakah perpindahan status diperbolehkan.
+     * Transisi: Published -> Completed
      */
-    public function canTransition(string $current, string $next): bool
+    public function complete(Activity $activity): Activity
     {
-        if ($current === $next) {
-            return true;
+        if ($activity->status !== 'Published') {
+            throw new InvalidArgumentException("Hanya kegiatan berstatus Published yang dapat diselesaikan.");
         }
 
-        return match ($current) {
-            'Planned' => in_array($next, ['Ongoing', 'Done']),
-            'Ongoing' => $next === 'Done',
-            'Done' => false,
-            default => false,
-        };
+        $activity->update(['status' => 'Completed']);
+        return $activity;
+    }
+
+    /**
+     * Transisi: Perubahan umum dengan pencegahan transisi ilegal
+     */
+    public function updateStatus(Activity $activity, string $newStatus): Activity
+    {
+        // Transisi ilegal: Completed tidak boleh kembali ke Draft
+        if ($activity->status === 'Completed' && $newStatus === 'Draft') {
+            throw new InvalidArgumentException("Transisi ilegal: Kegiatan yang sudah Completed tidak dapat dikembalikan menjadi Draft.");
+        }
+
+        if ($newStatus === 'Published') {
+            return $this->publish($activity);
+        }
+
+        if ($newStatus === 'Completed') {
+            return $this->complete($activity);
+        }
+
+        $activity->update(['status' => $newStatus]);
+        return $activity;
     }
 }

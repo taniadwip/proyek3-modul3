@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes; // 1. Import ini
 
 class Activity extends Model
 {
+    use SoftDeletes; // 2. Gunakan trait ini
+
     protected $fillable = [
-        'code',        
+        'code',
         'category_id',
         'title',
         'description',

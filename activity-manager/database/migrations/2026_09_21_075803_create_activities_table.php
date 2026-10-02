@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('activities', function (Blueprint $table) {
-            $table->id();
-            $table->string('code')->unique(); // Tambahkan baris ini
-            $table->string('title', 100);
-            $table->text('description')->nullable();
-            $table->date('activity_date');
-            $table->string('status', 20)->default('Planned');
-            $table->timestamps();
-        });
+    $table->id();
+    $table->string('code')->unique();
+    $table->string('title', 100);
+    $table->text('description')->nullable();
+    $table->date('activity_date');
+    $table->string('status', 20)->default('Planned');
+    $table->softDeletes(); // <-- Letakkan di sini
+    $table->timestamps();
+});
     }
 
     /**

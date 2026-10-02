@@ -3,15 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Activity extends Model
 {
     protected $fillable = [
+        'code',        
         'category_id',
         'title',
         'description',
         'activity_date',
-        'category',
         'status',
     ];
 

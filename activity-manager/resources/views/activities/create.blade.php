@@ -17,6 +17,14 @@
     <form action="{{ route('activities.store') }}" method="POST">
         @csrf
         <div>
+            <label>Kode Kegiatan:</label><br>
+            <input type="text" name="code" value="{{ old('code') }}" placeholder="Contoh: ACT-006" required style="width: 100%;">
+            @error('code')
+                <div style="color: red;">{{ $message }}</div>
+            @enderror
+        </div>
+        <br>
+        <div>
             <label>Judul:</label><br>
             <input type="text" name="title" value="{{ old('title') }}" style="width: 100%;">
         </div>

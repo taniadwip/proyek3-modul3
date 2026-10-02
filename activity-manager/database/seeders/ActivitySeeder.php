@@ -17,6 +17,7 @@ class ActivitySeeder extends Seeder
 
         Activity::create([
             'category_id' => $workshop ? $workshop->id : 1,
+            'code' => 'ACT-001',
             'title' => 'Workshop Git Dasar',
             'activity_date' => '2026-10-05',
             'status' => 'Planned',
@@ -25,6 +26,7 @@ class ActivitySeeder extends Seeder
 
         Activity::create([
             'category_id' => $akademik ? $akademik->id : 1,
+            'code' => 'ACT-002',
             'title' => 'Seminar Web Quality',
             'activity_date' => '2026-10-12',
             'status' => 'Planned',
@@ -33,6 +35,7 @@ class ActivitySeeder extends Seeder
 
         Activity::create([
             'category_id' => $akademik ? $akademik->id : 1,
+            'code' => 'ACT-003',
             'title' => 'Sprint Coding Modul 3',
             'activity_date' => '2026-10-15',
             'status' => 'Ongoing',
@@ -41,6 +44,7 @@ class ActivitySeeder extends Seeder
 
         Activity::create([
             'category_id' => $akademik ? $akademik->id : 1,
+            'code' => 'ACT-004',
             'title' => 'Review Arsitektur Perangkat Lunak',
             'activity_date' => '2026-10-18',
             'status' => 'Ongoing',
@@ -49,6 +53,7 @@ class ActivitySeeder extends Seeder
 
         Activity::create([
             'category_id' => $organisasi ? $organisasi->id : 1,
+            'code' => 'ACT-005',
             'title' => 'Instalasi Lingkungan Belajar',
             'activity_date' => '2026-09-20',
             'status' => 'Done',

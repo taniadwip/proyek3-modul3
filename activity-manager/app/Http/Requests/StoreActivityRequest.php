@@ -17,11 +17,12 @@ class StoreActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'min:5', 'max:100'], // BR-01
+            'code' => ['required', 'string', 'max:20', 'unique:activities,code'], // <-- Wajib ada!
+            'title' => ['required', 'string', 'max:100'],
+            'activity_date' => ['required', 'date'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'status' => ['required', 'in:Planned,Ongoing,Done'],
             'description' => ['nullable', 'string'],
-            'activity_date' => ['required', 'date'],                // BR-02
-            'category' => ['required', 'string', 'max:50'],
-            'status' => ['required', 'in:Planned,Ongoing,Done'],   // BR-03
         ];
     }
 }
